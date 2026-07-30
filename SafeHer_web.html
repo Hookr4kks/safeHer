@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>SafeHer</title>
+<style>
+:root{
+  --roxo:#7C3AED; --roxo-700:#4C1D95; --roxo-900:#3B0764;
+  --rosa:#EC4899; --rosa-900:#831843;
+  --azul:#3B82F6; --azul-900:#1E3A8A;
+  --lilas:#A78BFA; --rosa-claro:#F472B6; --chatbot:#C084FC;
+  --fundo:#0D0B1E; --card:#1A1535; --card-alto:#221C45; --modal:#12102A;
+  --input:#1E1A3E; --input-foco:#2A2460; --borda:#2D2756;
+  --texto:#F5F3FF; --texto-1:#E9E6F8; --texto-2:#C4BFDF; --texto-muted:#8B85A8;
+  --sucesso:#10B981; --aviso:#F59E0B; --erro:#EF4444;
+  --r-sm:8px; --r-md:12px; --r-lg:20px; --r-xl:28px; --r-full:999px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  background:radial-gradient(1200px 800px at 15% -10%, rgba(124,58,237,.25), transparent 60%),
+             radial-gradient(900px 700px at 110% 10%, rgba(236,72,153,.12), transparent 55%),
+             var(--fundo);
+  color:var(--texto-1);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;
+  min-height:100vh;
+}
+h1,h2,h3,h4,p{margin:0;}
+button{font-family:inherit; cursor:pointer;}
+a{color:inherit; text-decoration:none;}
+::selection{background:var(--roxo); color:#fff;}
+input,textarea,select{font-family:inherit;}
+
+.h-display{font-size:34px; font-weight:800; letter-spacing:-0.02em; color:var(--texto);}
+.h-titulo{font-size:28px; font-weight:800; letter-spacing:-0.01em; color:var(--texto);}
+.h-secao{font-size:24px; font-weight:600; color:var(--texto-1);}
+.h-sub{font-size:20px; font-weight:600; color:var(--texto-1);}
+.h-corpo-forte{font-size:17px; font-weight:500;}
+.h-corpo{font-size:15px; font-weight:400; color:var(--texto-2);}
+.h-legenda{font-size:14px; font-weight:400; color:var(--texto-muted);}
+.h-micro{font-size:12px; font-weight:400; color:var(--texto-muted);}
+
+#app{max-width:1180px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:96px;}
+.shell{display:flex; min-height:100vh;}
+.sidebar{width:236px; flex-shrink:0; padding:24px 14px; border-right:1px solid var(--borda); position:sticky; top:0; height:100vh; display:flex; flex-direction:column; gap:4px;}
+.main{flex:1; padding:28px 32px 60px; min-width:0;}
+.brand{display:flex; align-items:center; gap:10px; padding:6px 10px 26px;}
+.brand .mark{width:36px;height:36px;border-radius:var(--r-md);background:linear-gradient(135deg,var(--roxo),var(--rosa)); display:flex;align-items:center;justify-content:center;font-size:18px; box-shadow:0 0 22px rgba(124,58,237,.55);}
+.brand .name{font-size:19px; font-weight:800; color:var(--texto);}
+.nav-item{display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:var(--r-md); color:var(--texto-2); font-size:14.5px; font-weight:500; transition:background .15s,color .15s;}
+.nav-item:hover{background:var(--card); color:var(--texto-1);}
+.nav-item.ativo{background:var(--card-alto); color:var(--texto);}
+.nav-item .ic{width:20px; text-align:center; font-size:16px;}
+.nav-sep{height:1px; background:var(--borda); margin:12px 6px;}
+.nav-foot{margin-top:auto; padding:10px;}
+
+.card{background:var(--card); border:1px solid var(--borda); border-radius:var(--r-lg); padding:20px;}
+.card-alto{background:var(--card-alto);}
+.card-hover{transition:transform .15s, border-color .15s, box-shadow .15s;}
+.card-hover:hover{transform:translateY(-2px); border-color:#3a3170; box-shadow:0 12px 30px rgba(0,0,0,.35);}
+
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:var(--r-sm); padding:12px 18px; font-size:15px; font-weight:600; transition:filter .15s, transform .08s;}
+.btn:active{transform:scale(.98);}
+.btn-primario{background:var(--roxo); color:#fff;}
+.btn-primario:hover{filter:brightness(1.1);}
+.btn-secundario{background:var(--card-alto); color:var(--texto-1); border:1px solid var(--borda);}
+.btn-secundario:hover{background:#2a2456;}
+.btn-outline{background:transparent; border:1px solid var(--borda); color:var(--texto-1);}
+.btn-outline:hover{border-color:var(--roxo);}
+.btn-emergencia{background:var(--rosa); color:#fff;}
+.btn-emergencia:hover{filter:brightness(1.08);}
+.btn-block{width:100%;}
+.btn-sm{padding:8px 12px; font-size:13.5px; border-radius:var(--r-sm);}
+.btn:disabled{opacity:.4; cursor:not-allowed;}
+
+.input-grp label{display:block; font-size:13px; color:var(--texto-2); margin-bottom:6px; font-weight:500;}
+.input-field{width:100%; background:var(--input); border:1px solid var(--borda); border-radius:var(--r-sm); padding:12px 14px; color:var(--texto-1); font-size:15px; outline:none; transition:border-color .15s, background .15s;}
+.input-field:focus{border-color:var(--roxo); background:var(--input-foco);}
+.input-field::placeholder{color:var(--texto-muted);}
+
+.badge{display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:var(--r-full); font-size:12px; font-weight:600;}
+.badge-roxo{background:rgba(124,58,237,.18); color:#c4b5fd;}
+.badge-rosa{background:rgba(236,72,153,.18); color:#f9a8d4;}
+.badge-azul{background:rgba(59,130,246,.18); color:#93c5fd;}
+.badge-lilas{background:rgba(167,139,250,.18); color:#ddd6fe;}
+.badge-sucesso{background:rgba(16,185,129,.18); color:#6ee7b7;}
+.badge-aviso{background:rgba(245,158,11,.18); color:#fcd34d;}
+.badge-erro{background:rgba(239,68,68,.18); color:#fca5a5;}
+
+.grid{display:grid; gap:16px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+@media(max-width:900px){.grid-3{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:640px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+.topbar{display:none;}
+.bottomnav{display:none;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .main{padding:18px 16px 100px;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:16px 4px;}
+  .bottomnav{display:flex; position:fixed; bottom:0; left:0; right:0; background:var(--modal); border-top:1px solid var(--borda); padding:8px 4px 12px; justify-content:space-around; z-index:40;}
+  .bn-item{display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--texto-muted); font-size:10.5px; font-weight:600; padding:6px 8px; border-radius:var(--r-sm);}
+  .bn-item.ativo{color:var(--texto);}
+  .bn-item .ic{font-size:19px;}
+}
+
+.modulo-card{border-radius:var(--r-xl); padding:22px; position:relative; overflow:hidden; border:1px solid var(--borda);}
+.modulo-card .glow{position:absolute; width:160px; height:160px; border-radius:50%; filter:blur(40px); opacity:.35; top:-50px; right:-40px;}
+.modulo-card .ic{font-size:30px; margin-bottom:14px; display:inline-block;}
+.modulo-card .titulo{font-size:18px; font-weight:700; margin-bottom:4px;}
+.modulo-card .desc{font-size:13.5px; color:var(--texto-2); line-height:1.4;}
+
+.fab-panico{position:fixed; right:26px; bottom:26px; width:60px; height:60px; border-radius:50%; background:var(--rosa); color:#fff; font-size:24px; border:none; box-shadow:0 8px 26px rgba(236,72,153,.55); z-index:50; display:flex; align-items:center; justify-content:center;}
+@media(max-width:900px){.fab-panico{bottom:96px;}}
+.fab-panico.pulsando{animation:pulso 1.4s infinite;}
+@keyframes pulso{0%{box-shadow:0 0 0 0 rgba(236,72,153,.55);}70%{box-shadow:0 0 0 22px rgba(236,72,153,0);}100%{box-shadow:0 0 0 0 rgba(236,72,153,0);}}
+
+.overlay{position:fixed; inset:0; background:rgba(6,4,16,.72); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;}
+.modal{background:var(--modal); border:1px solid var(--borda); border-radius:var(--r-lg); padding:26px; max-width:420px; width:100%; max-height:86vh; overflow-y:auto;}
+
+.toast-wrap{position:fixed; top:18px; left:50%; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:8px; align-items:center;}
+.toast{background:var(--card-alto); border:1px solid var(--borda); padding:12px 18px; border-radius:var(--r-md); font-size:14px; box-shadow:0 10px 30px rgba(0,0,0,.4); animation:toastin .2s ease;}
+@keyframes toastin{from{opacity:0; transform:translateY(-8px);} to{opacity:1; transform:translateY(0);}}
+
+.progress-bar{height:6px; border-radius:var(--r-full); background:var(--input); overflow:hidden;}
+.progress-bar > div{height:100%; background:linear-gradient(90deg,var(--roxo),var(--rosa)); transition:width .3s;}
+
+.chat-scroll{display:flex; flex-direction:column; gap:10px; max-height:52vh; overflow-y:auto; padding:6px 2px;}
+.bolha{max-width:78%; padding:11px 14px; border-radius:var(--r-md); font-size:14.5px; line-height:1.45;}
+.bolha.bot{background:var(--card-alto); align-self:flex-start; border-bottom-left-radius:4px;}
+.bolha.user{background:var(--roxo); color:#fff; align-self:flex-end; border-bottom-right-radius:4px;}
+.chip{background:var(--input); border:1px solid var(--borda); border-radius:var(--r-full); padding:7px 13px; font-size:13px; color:var(--texto-2);}
+.chip:hover{border-color:var(--roxo); color:var(--texto);}
+
+.contato-row{display:flex; align-items:center; gap:12px; padding:13px; border-radius:var(--r-md); background:var(--card-alto); border:1px solid var(--borda);}
+.avatar{width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; color:#fff; flex-shrink:0;}
+
+.barra-mini{height:80px; display:flex; align-items:flex-end; gap:6px;}
+.barra-mini .col{flex:1; border-radius:4px 4px 0 0; background:linear-gradient(180deg,var(--lilas),var(--roxo)); min-height:4px;}
+
+.hotline-banner{background:linear-gradient(90deg, rgba(236,72,153,.14), rgba(124,58,237,.14)); border:1px solid var(--rosa-900); border-radius:var(--r-md); padding:12px 16px; display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--texto-2);}
+
+::-webkit-scrollbar{width:8px; height:8px;}
+::-webkit-scrollbar-thumb{background:var(--card-alto); border-radius:99px;}
+::-webkit-scrollbar-track{background:transparent;}
+
+.fade-in{animation:fadein .25s ease;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+.switch{position:relative; width:44px; height:24px; background:var(--input); border-radius:999px; border:1px solid var(--borda); flex-shrink:0;}
+.switch.on{background:var(--roxo);}
+.switch .knob{position:absolute; top:2px; left:2px; width:18px; height:18px; background:#fff; border-radius:50%; transition:left .15s;}
+.switch.on .knob{left:22px;}
+</style>
+</head>
+<body>
+<div id="toastWrap" class="toast-wrap"></div>
+<div id="app"></div>
+
+<script>
+/* ==========================================================================
+   SafeHer — Web (protótipo funcional em memória, sem back-end)
+   ========================================================================== */
+
+const CONTATOS_UTEIS = [
+  {nome:"Central de Atendimento à Mulher", numero:"180", desc:"Ligação gratuita 24h — orientação e denúncia de violência contra a mulher."},
+  {nome:"Disque Direitos Humanos", numero:"100", desc:"Denúncias de violações de direitos humanos, 24h."},
+  {nome:"Polícia Militar", numero:"190", desc:"Emergência policial imediata."},
+  {nome:"CVV — Centro de Valorização da Vida", numero:"188", desc:"Apoio emocional e prevenção do suicídio, 24h, sigiloso."},
+];
+
+const PERGUNTAS_TESTE = [
+  {id:1, texto:"Seu(sua) parceiro(a) controla com quem você fala, sai ou se relaciona?"},
+  {id:2, texto:"Você já se sentiu com medo de discordar dele(a) por causa da reação que poderia ter?"},
+  {id:3, texto:"Ele(a) já te impediu de trabalhar, estudar ou administrar seu próprio dinheiro?"},
+  {id:4, texto:"Você já foi humilhada, xingada ou constrangida por ele(a), em público ou em particular?"},
+  {id:5, texto:"Ele(a) já ameaçou te machucar, se machucar, ou machucar alguém que você ama?"},
+  {id:6, texto:"Já houve empurrões, tapas, apertões ou qualquer contato físico agressivo?"},
+  {id:7, texto:"Você sente que precisa pedir permissão para decisões do seu dia a dia?"},
+  {id:8, texto:"Ele(a) já revisou seu celular, redes sociais ou mensagens sem sua autorização?"},
+  {id:9, texto:"Você já mudou de comportamento por medo da reação dele(a)?"},
+  {id:10, texto:"Você sente que está cada vez mais isolada de amigos e família?"},
+];
+
+const FLUXO_CHATBOT = [
+  {chaves:["oi","ola","olá","bom dia","boa tarde","boa noite"], resposta:"Oi, eu estou aqui com você. Pode me contar em poucas palavras o que está sentindo ou precisando agora?"},
+  {chaves:["medo","perigo","socorro","ajuda urgente","correndo risco"], resposta:"Sinto muito que você esteja passando por isso. Se o perigo é imediato, ligue 190 (Polícia) agora. Quer que eu abra o botão de emergência (Alerther) para avisar seus contatos de confiança?"},
+  {chaves:["denunciar","denúncia","denuncia","boletim","delegacia"], resposta:"Você pode denunciar pela Central 180 (ligação gratuita, 24h) ou pelo Disque 100. Também é possível registrar boletim de ocorrência em qualquer Delegacia, de preferência uma Delegacia da Mulher. Quer que eu te leve para o Mapa de Apoio?"},
+  {chaves:["controla","controle","ciumes","ciúmes","isolad"], resposta:"O controle excessivo e o isolamento de amigos e família são sinais de alerta importantes. Isso não é sua culpa. Você pode fazer o Teste Interativo para entender melhor o padrão que está vivendo."},
+  {chaves:["ansiosa","ansiedade","triste","sozinha","exausta","medo dele","medo dela"], resposta:"Seu sentimento é válido e você não precisa passar por isso sozinha. Se quiser conversa humana e sigilosa agora, a Central 180 tem atendimento 24h. Estou aqui para te ouvir também."},
+  {chaves:["obrigada","obrigado","valeu"], resposta:"Estou por aqui sempre que precisar. Cuide-se."},
+];
+const RESPOSTA_PADRAO_BOT = "Estou te ouvindo. Se preferir, posso te mostrar os contatos de emergência, o mapa de apoio ou o teste interativo — é só pedir.";
+
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function agora(){
+  const d = new Date();
+  return d.toLocaleDateString('pt-BR') + " às " + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+function coresIniciais(nome){
+  const paleta = ["#7C3AED","#EC4899","#3B82F6","#A78BFA","#F472B6","#10B981"];
+  let h=0; for(const c of (nome||"?")) h += c.charCodeAt(0);
+  return paleta[h % paleta.length];
+}
+function iniciais(nome){
+  if(!nome) return "?";
+  const p = nome.trim().split(" ");
+  return (p[0][0] + (p[1] ? p[1][0] : "")).toUpperCase();
+}
+
+const state = {
+  route: "#/splash",
+  logado: false,
+  usuario: {nome:"", email:"", cidade:"", corAvatar: coresIniciais("U")},
+  contatos: [
+    {id:uid(), nome:"Mãe", telefone:"5599999990001", parentesco:"Família"},
+    {id:uid(), nome:"Melhor amiga", telefone:"5599999990002", parentesco:"Amizade"},
+  ],
+  alertas: [],
+  testes: [],
+  chat: [{de:"bot", texto:"Oi, eu sou a assistente do SafeHer. Este espaço é seu, sigiloso e sem julgamentos. Como você está agora?"}],
+  config: {modoDiscreto:false, notificacoes:true, compartilharLocalizacao:true},
+  localizacaoAtual: null,
+  alertaAtivo: null,
+  contadorAlerta: null,
+};
+
+function toast(msg){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 2600);
+}
+
+function ir(rota){ state.route = rota; location.hash = rota; render(); window.scrollTo(0,0); }
+window.addEventListener('hashchange', ()=>{ state.route = location.hash || "#/splash"; render(); });
+
+/* ---------------------------------------------------------------------- */
+/* LAYOUT: navegação                                                       */
+/* ---------------------------------------------------------------------- */
+const ITENS_NAV = [
+  {rota:"#/inicio", ic:"🏠", nome:"Início"},
+  {rota:"#/alerther", ic:"🆘", nome:"Alerther"},
+  {rota:"#/mapa", ic:"📍", nome:"Mapa de Apoio"},
+  {rota:"#/teste", ic:"📝", nome:"Teste Interativo"},
+  {rota:"#/chatbot", ic:"💬", nome:"Chatbot"},
+  {rota:"#/contatos", ic:"👥", nome:"Contatos"},
+  {rota:"#/estatisticas", ic:"📊", nome:"Estatísticas"},
+  {rota:"#/perfil", ic:"👤", nome:"Perfil"},
+  {rota:"#/config", ic:"⚙️", nome:"Configurações"},
+  {rota:"#/sobre", ic:"ℹ️", nome:"Sobre"},
+];
+const NAV_MOBILE = ["#/inicio","#/alerther","#/mapa","#/chatbot","#/perfil"];
+
+function sidebar(){
+  return `
+  <div class="sidebar">
+    <div class="brand"><div class="mark">🛡️</div><div class="name">SafeHer</div></div>
+    ${ITENS_NAV.map((it,idx)=>`
+      ${idx===6 ? '<div class="nav-sep"></div>' : ''}
+      <a class="nav-item ${state.route===it.rota?'ativo':''}" href="${it.rota}"><span class="ic">${it.ic}</span>${it.nome}</a>
+    `).join("")}
+    <div class="nav-foot">
+      <button class="btn btn-outline btn-block btn-sm" onclick="sair()">Sair</button>
+    </div>
+  </div>`;
+}
+function topbar(titulo){
+  return `<div class="topbar">
+    <div style="display:flex;align-items:center;gap:9px;"><div class="mark" style="width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,var(--roxo),var(--rosa));display:flex;align-items:center;justify-content:center;font-size:14px;">🛡️</div><span class="h-corpo-forte">${titulo}</span></div>
+    <a href="#/config" style="font-size:20px;">⚙️</a>
+  </div>`;
+}
+function bottomnav(){
+  const map = {"#/inicio":"🏠","#/alerther":"🆘","#/mapa":"📍","#/chatbot":"💬","#/perfil":"👤"};
+  const nomes = {"#/inicio":"Início","#/alerther":"Alerta","#/mapa":"Mapa","#/chatbot":"Chat","#/perfil":"Perfil"};
+  return `<div class="bottomnav">
+    ${NAV_MOBILE.map(r=>`<a class="bn-item ${state.route===r?'ativo':''}" href="${r}"><span class="ic">${map[r]}</span>${nomes[r]}</a>`).join("")}
+  </div>`;
+}
+function fabPanico(){
+  if(["#/splash","#/login","#/cadastro","#/alerther"].includes(state.route)) return "";
+  return `<button class="fab-panico ${state.alertaAtivo?'pulsando':''}" onclick="ir('#/alerther')" title="Ir para o Alerther">🆘</button>`;
+}
+
+/* ---------------------------------------------------------------------- */
+/* RENDER PRINCIPAL                                                        */
+/* ---------------------------------------------------------------------- */
+function render(){
+  const app = document.getElementById('app');
+  if(!state.logado && !["#/splash","#/login","#/cadastro"].includes(state.route)){
+    state.route = "#/login";
+  }
+  let conteudo = "";
+  switch(state.route){
+    case "#/splash": conteudo = telaSplash(); break;
+    case "#/login": conteudo = telaLogin(); break;
+    case "#/cadastro": conteudo = telaCadastro(); break;
+    case "#/inicio": conteudo = telaInicio(); break;
+    case "#/alerther": conteudo = telaAlerther(); break;
+    case "#/mapa": conteudo = telaMapa(); break;
+    case "#/teste": conteudo = telaTeste(); break;
+    case "#/chatbot": conteudo = telaChatbot(); break;
+    case "#/contatos": conteudo = telaContatos(); break;
+    case "#/estatisticas": conteudo = telaEstatisticas(); break;
+    case "#/perfil": conteudo = telaPerfil(); break;
+    case "#/config": conteudo = telaConfig(); break;
+    case "#/sobre": conteudo = telaSobre(); break;
+    default: conteudo = telaInicio();
+  }
+  if(["#/splash","#/login","#/cadastro"].includes(state.route)){
+    app.innerHTML = `<div class="fade-in">${conteudo}</div>`;
+  } else {
+    app.innerHTML = `<div class="shell">
+      ${sidebar()}
+      <div class="main">
+        ${topbar(tituloRota())}
+        <div class="fade-in">${conteudo}</div>
+      </div>
+    </div>
+    ${bottomnav()}
+    ${fabPanico()}`;
+  }
+  posRender();
+}
+function tituloRota(){
+  const f = ITENS_NAV.find(i=>i.rota===state.route);
+  return f ? f.nome : "SafeHer";
+}
+function posRender(){
+  const chatEl = document.getElementById('chatScroll');
+  if(chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: SPLASH                                                            */
+/* ---------------------------------------------------------------------- */
+function telaSplash(){
+  setTimeout(()=>{ if(state.route==="#/splash") ir(state.logado ? "#/inicio" : "#/login"); }, 1400);
+  return `<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
+    <div class="mark" style="width:84px;height:84px;border-radius:24px;background:linear-gradient(135deg,var(--roxo),var(--rosa));display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 0 50px rgba(124,58,237,.55);">🛡️</div>
+    <div class="h-display">SafeHer</div>
+    <div class="h-corpo">Sua rede de segurança, sempre por perto.</div>
+  </div>`;
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: LOGIN / CADASTRO                                                  */
+/* ---------------------------------------------------------------------- */
+function telaLogin(){
+  return `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div class="card" style="max-width:380px;width:100%;">
+      <div style="text-align:center;margin-bottom:22px;">
+        <div class="mark" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--roxo),var(--rosa));display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px;">🛡️</div>
+        <div class="h-titulo">Bem-vinda de volta</div>
+        <div class="h-legenda">Entre para acessar sua rede de apoio</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="input-grp"><label>E-mail</label><input id="loginEmail" class="input-field" placeholder="voce@email.com" type="email"></div>
+        <div class="input-grp"><label>Senha</label><input id="loginSenha" class="input-field" placeholder="••••••••" type="password"></div>
+        <button class="btn btn-primario btn-block" onclick="fazerLogin()">Entrar</button>
+        <button class="btn btn-outline btn-block" onclick="ir('#/cadastro')">Criar conta</button>
+      </div>
+      <div class="hotline-banner" style="margin-top:20px;"><span>🚨</span><span>Em perigo agora? Ligue <b>190</b> ou <b>180</b> imediatamente.</span></div>
+    </div>
+  </div>`;
+}
+function telaCadastro(){
+  return `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div class="card" style="max-width:380px;width:100%;">
+      <div style="margin-bottom:18px;">
+        <div class="h-titulo">Criar sua conta</div>
+        <div class="h-legenda">Leva menos de um minuto</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="input-grp"><label>Nome</label><input id="cadNome" class="input-field" placeholder="Como podemos te chamar?"></div>
+        <div class="input-grp"><label>E-mail</label><input id="cadEmail" class="input-field" placeholder="voce@email.com" type="email"></div>
+        <div class="input-grp"><label>Senha</label><input id="cadSenha" class="input-field" placeholder="Crie uma senha" type="password"></div>
+        <button class="btn btn-primario btn-block" onclick="fazerCadastro()">Criar conta e continuar</button>
+        <button class="btn btn-outline btn-block" onclick="ir('#/login')">Já tenho conta</button>
+      </div>
+    </div>
+  </div>`;
+}
+function fazerLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  if(!email){ toast("Digite seu e-mail para entrar."); return; }
+  state.usuario.email = email;
+  if(!state.usuario.nome) state.usuario.nome = email.split("@")[0];
+  state.usuario.corAvatar = coresIniciais(state.usuario.nome);
+  state.logado = true;
+  toast("Login realizado. Bem-vinda ao SafeHer!");
+  ir("#/inicio");
+}
+function fazerCadastro(){
+  const nome = document.getElementById('cadNome').value.trim();
+  const email = document.getElementById('cadEmail').value.trim();
+  if(!nome || !email){ toast("Preencha nome e e-mail."); return; }
+  state.usuario.nome = nome; state.usuario.email = email;
+  state.usuario.corAvatar = coresIniciais(nome);
+  state.logado = true;
+  toast("Conta criada com sucesso!");
+  ir("#/inicio");
+}
+function sair(){ state.logado = false; ir("#/login"); }
+
+/* ---------------------------------------------------------------------- */
+/* TELA: INÍCIO                                                            */
+/* ---------------------------------------------------------------------- */
+function telaInicio(){
+  const nomeExib = state.usuario.nome || "Bem-vinda";
+  const modulos = [
+    {rota:"#/alerther", ic:"🆘", cor:"var(--rosa)", titulo:"Alerther", desc:"Botão de emergência com localização e aviso rápido aos seus contatos."},
+    {rota:"#/mapa", ic:"📍", cor:"var(--azul)", titulo:"Mapa de Apoio", desc:"Delegacias, hospitais e abrigos mais próximos de você."},
+    {rota:"#/teste", ic:"📝", cor:"var(--lilas)", titulo:"Teste Interativo", desc:"Entenda padrões de risco em um relacionamento, com sigilo total."},
+    {rota:"#/chatbot", ic:"💬", cor:"var(--chatbot)", titulo:"Chatbot de apoio", desc:"Converse, tire dúvidas e receba orientação a qualquer hora."},
+    {rota:"#/contatos", ic:"👥", cor:"var(--rosa-claro)", titulo:"Contatos de Emergência", desc:"Gerencie quem deve ser avisado em uma emergência."},
+    {rota:"#/estatisticas", ic:"📊", cor:"var(--rosa-claro)", titulo:"Estatísticas", desc:"Seu histórico de uso: alertas, testes e evolução."},
+  ];
+  return `
+  <div style="display:flex;flex-direction:column;gap:22px;">
+    <div>
+      <div class="h-titulo">Olá, ${nomeExib.split(" ")[0]} 👋</div>
+      <div class="h-corpo">Este é seu espaço seguro. O que você precisa agora?</div>
+    </div>
+
+    <div class="hotline-banner">
+      <span>🚨</span><span>Emergência agora? Ligue <b>190</b> (Polícia) ou <b>180</b> (Central de Atendimento à Mulher).</span>
+    </div>
+
+    <div class="grid grid-3">
+      ${modulos.map(m=>`
+        <a href="${m.rota}" class="modulo-card card-hover fade-in" style="background:var(--card);">
+          <div class="glow" style="background:${m.cor};"></div>
+          <div class="ic">${m.ic}</div>
+          <div class="titulo">${m.titulo}</div>
+          <div class="desc">${m.desc}</div>
+        </a>
+      `).join("")}
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="h-sub" style="margin-bottom:10px;">Resumo rápido</div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borda);"><span class="h-corpo">Alertas enviados</span><span class="h-corpo-forte">${state.alertas.length}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borda);"><span class="h-corpo">Testes realizados</span><span class="h-corpo-forte">${state.testes.length}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;"><span class="h-corpo">Contatos cadastrados</span><span class="h-corpo-forte">${state.contatos.length}</span></div>
+      </div>
+      <div class="card">
+        <div class="h-sub" style="margin-bottom:10px;">Dica de segurança</div>
+        <div class="h-corpo" style="line-height:1.5;">Combine uma "palavra-código" com alguém de confiança — se você disser essa palavra em uma ligação, essa pessoa saberá que precisa agir.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: ALERTHER (botão de emergência)                                    */
+/* ---------------------------------------------------------------------- */
+function telaAlerther(){
+  if(state.alertaAtivo){
+    return `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;padding:20px 0;">
+      <div class="badge badge-erro" style="font-size:14px;">Alerta ativo</div>
+      <div style="width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(236,72,153,.35),transparent 70%);display:flex;align-items:center;justify-content:center;">
+        <div style="width:120px;height:120px;border-radius:50%;background:var(--rosa);display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:0 0 60px rgba(236,72,153,.6);" class="fab-panico pulsando">🆘</div>
+      </div>
+      <div class="h-sub">Avisando seus contatos de confiança…</div>
+      <div class="h-corpo" style="max-width:420px;">${state.localizacaoAtual ? "Localização capturada e pronta para envio." : "Não foi possível obter sua localização — o aviso será enviado mesmo assim."}</div>
+      <div class="card" style="width:100%;max-width:440px;text-align:left;">
+        <div class="h-legenda" style="margin-bottom:8px;">Contatos notificados</div>
+        ${state.contatos.map(c=>`<div style="display:flex;justify-content:space-between;padding:6px 0;"><span class="h-corpo">${c.nome}</span><span class="badge badge-sucesso">avisado ✓</span></div>`).join("") || '<div class="h-legenda">Nenhum contato cadastrado.</div>'}
+      </div>
+      <button class="btn btn-secundario" style="min-width:220px;" onclick="cancelarAlerta()">Estou segura — cancelar alerta</button>
+    </div>`;
+  }
+  return `
+  <div style="display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;padding:16px 0 30px;">
+    <div class="h-titulo">Botão de Emergência</div>
+    <div class="h-corpo" style="max-width:440px;">Ao acionar, o SafeHer captura sua localização e prepara uma mensagem de emergência para todos os seus contatos de confiança.</div>
+    <button class="fab-panico" style="position:static;width:150px;height:150px;font-size:44px;box-shadow:0 0 60px rgba(236,72,153,.5);" onclick="dispararAlerta()">🆘</button>
+    <div class="h-legenda">Toque para acionar o alerta</div>
+
+    <div class="grid grid-2" style="width:100%;max-width:560px;text-align:left;margin-top:10px;">
+      <div class="card">
+        <div class="h-corpo-forte" style="margin-bottom:6px;">📍 Localização</div>
+        <div class="h-legenda">${state.config.compartilharLocalizacao ? "Será enviada junto ao alerta." : "Compartilhamento desativado nas configurações."}</div>
+      </div>
+      <div class="card">
+        <div class="h-corpo-forte" style="margin-bottom:6px;">👥 ${state.contatos.length} contato(s)</div>
+        <div class="h-legenda">Serão avisados automaticamente.</div>
+      </div>
+    </div>
+
+    ${state.alertas.length ? `
+    <div class="card" style="width:100%;max-width:560px;text-align:left;margin-top:6px;">
+      <div class="h-corpo-forte" style="margin-bottom:8px;">Histórico de alertas</div>
+      ${state.alertas.slice().reverse().slice(0,5).map(a=>`
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--borda);">
+          <span class="h-corpo">${a.dataHora}</span><span class="badge badge-erro">enviado</span>
+        </div>`).join("")}
+    </div>` : ""}
+
+    <div class="hotline-banner" style="max-width:560px;"><span>☎️</span><span>Perigo imediato: ligue <b>190</b>. Este botão avisa pessoas de confiança, não substitui a polícia.</span></div>
+  </div>`;
+}
+function dispararAlerta(){
+  const alerta = {id:uid(), dataHora:agora(), contatosNotificados: state.contatos.map(c=>c.id)};
+  state.alertaAtivo = alerta;
+  if(navigator.geolocation && state.config.compartilharLocalizacao){
+    navigator.geolocation.getCurrentPosition(
+      pos=>{ state.localizacaoAtual = {lat:pos.coords.latitude, lng:pos.coords.longitude}; if(state.route==="#/alerther") render(); },
+      ()=>{ state.localizacaoAtual = null; if(state.route==="#/alerther") render(); },
+      {timeout:6000}
+    );
+  }
+  state.alertas.push(alerta);
+  render();
+  toast("Alerta acionado. Contatos sendo avisados.");
+}
+function cancelarAlerta(){
+  state.alertaAtivo = null;
+  render();
+  toast("Alerta cancelado. Que bom que você está segura.");
+}
+function linkWhatsapp(telefone, msg){
+  return `https://wa.me/${telefone}?text=${encodeURIComponent(msg)}`;
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: MAPA DE APOIO                                                     */
+/* ---------------------------------------------------------------------- */
+const LOCAIS_APOIO = [
+  {tipo:"Delegacia da Mulher", ic:"👮‍♀️", cor:"var(--azul)", busca:"delegacia da mulher"},
+  {tipo:"Hospital / Pronto-socorro", ic:"🏥", cor:"var(--erro)", busca:"hospital pronto socorro"},
+  {tipo:"CRAS / Assistência Social", ic:"🏛️", cor:"var(--sucesso)", busca:"CRAS assistência social"},
+  {tipo:"Casa abrigo", ic:"🏠", cor:"var(--lilas)", busca:"casa abrigo mulheres"},
+  {tipo:"Defensoria Pública", ic:"⚖️", cor:"var(--aviso)", busca:"defensoria publica"},
+];
+function telaMapa(){
+  return `
+  <div style="display:flex;flex-direction:column;gap:18px;">
+    <div class="h-corpo">Encontre rapidamente pontos de apoio perto de você. Toque em uma categoria para abrir os locais mais próximos no mapa.</div>
+    <button class="btn btn-secundario" onclick="obterLocalizacaoMapa()">📍 Usar minha localização atual</button>
+    <div id="locMapaStatus" class="h-legenda"></div>
+    <div class="grid grid-2">
+      ${LOCAIS_APOIO.map(l=>`
+        <div class="card card-hover" style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:38px;height:38px;border-radius:10px;background:${l.cor}22;display:flex;align-items:center;justify-content:center;font-size:18px;">${l.ic}</div>
+            <div class="h-corpo-forte">${l.tipo}</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="abrirMapa('${l.busca}')">Abrir no mapa →</button>
+        </div>
+      `).join("")}
+    </div>
+    <div class="card">
+      <div class="h-corpo-forte" style="margin-bottom:10px;">Linhas de apoio nacionais</div>
+      ${CONTATOS_UTEIS.map(c=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--borda);">
+          <div><div class="h-corpo-forte" style="font-size:14.5px;">${c.nome}</div><div class="h-legenda">${c.desc}</div></div>
+          <a class="btn btn-primario btn-sm" href="tel:${c.numero}">Ligar ${c.numero}</a>
+        </div>
+      `).join("")}
+    </div>
+  </div>`;
+}
+function obterLocalizacaoMapa(){
+  const st = document.getElementById('locMapaStatus');
+  if(!navigator.geolocation){ st.textContent="Geolocalização não suportada neste navegador."; return; }
+  st.textContent = "Obtendo localização…";
+  navigator.geolocation.getCurrentPosition(
+    pos=>{ state.localizacaoAtual = {lat:pos.coords.latitude, lng:pos.coords.longitude}; st.textContent = "Localização obtida — os links de mapa agora usarão sua posição atual."; },
+    ()=>{ st.textContent = "Não foi possível obter sua localização. Buscando de forma genérica."; },
+  );
+}
+function abrirMapa(busca){
+  let url;
+  if(state.localizacaoAtual){
+    url = `https://www.google.com/maps/search/${encodeURIComponent(busca)}/@${state.localizacaoAtual.lat},${state.localizacaoAtual.lng},14z`;
+  } else {
+    url = `https://www.google.com/maps/search/${encodeURIComponent(busca)}`;
+  }
+  window.open(url, "_blank");
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: TESTE INTERATIVO                                                  */
+/* ---------------------------------------------------------------------- */
+const testeState = {passo:0, respostas:{}, finalizado:false};
+function telaTeste(){
+  if(testeState.finalizado){
+    const pontos = Object.values(testeState.respostas).filter(r=>r==="sim").length;
+    let nivel, cor, texto;
+    if(pontos <= 2){ nivel="Atenção baixa"; cor="badge-sucesso"; texto="Poucos sinais identificados. Continue atenta ao seu bem-estar e confie na sua percepção."; }
+    else if(pontos <= 5){ nivel="Atenção moderada"; cor="badge-aviso"; texto="Existem sinais de alerta que merecem cuidado. Considere conversar com alguém de confiança ou um serviço especializado."; }
+    else { nivel="Atenção alta"; cor="badge-erro"; texto="Foram identificados vários sinais associados a relacionamentos abusivos. Você não está sozinha — buscar apoio pode fazer diferença."; }
+    return `
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:560px;">
+      <div class="card" style="text-align:center;">
+        <div class="h-legenda">Resultado</div>
+        <div class="h-titulo" style="margin:6px 0;">${pontos} de ${PERGUNTAS_TESTE.length} sinais identificados</div>
+        <span class="badge ${cor}">${nivel}</span>
+        <div class="h-corpo" style="margin-top:14px;line-height:1.6;">${texto}</div>
+      </div>
+      <div class="hotline-banner"><span>💬</span><span>Este teste é apenas informativo, não é um diagnóstico. Para conversar com alguém, ligue <b>180</b> (sigiloso e gratuito).</span></div>
+      <div style="display:flex;gap:12px;">
+        <button class="btn btn-secundario" style="flex:1;" onclick="reiniciarTeste()">Refazer teste</button>
+        <button class="btn btn-primario" style="flex:1;" onclick="ir('#/chatbot')">Conversar com o chatbot</button>
+      </div>
+    </div>`;
+  }
+  const p = PERGUNTAS_TESTE[testeState.passo];
+  const progresso = Math.round((testeState.passo/PERGUNTAS_TESTE.length)*100);
+  return `
+  <div style="display:flex;flex-direction:column;gap:18px;max-width:560px;">
+    <div class="h-corpo">Responda com sinceridade — suas respostas ficam só neste dispositivo, ninguém mais vê.</div>
+    <div class="progress-bar"><div style="width:${progresso}%;"></div></div>
+    <div class="h-legenda">Pergunta ${testeState.passo+1} de ${PERGUNTAS_TESTE.length}</div>
+    <div class="card">
+      <div class="h-sub" style="line-height:1.4;">${p.texto}</div>
+      <div style="display:flex;gap:12px;margin-top:20px;">
+        <button class="btn btn-outline" style="flex:1;" onclick="responderTeste(false)">Não</button>
+        <button class="btn btn-emergencia" style="flex:1;" onclick="responderTeste(true)">Sim</button>
+      </div>
+    </div>
+  </div>`;
+}
+function responderTeste(sim){
+  const p = PERGUNTAS_TESTE[testeState.passo];
+  testeState.respostas[p.id] = sim ? "sim" : "nao";
+  if(testeState.passo < PERGUNTAS_TESTE.length-1){
+    testeState.passo++;
+  } else {
+    testeState.finalizado = true;
+    const pontos = Object.values(testeState.respostas).filter(r=>r==="sim").length;
+    state.testes.push({id:uid(), dataHora:agora(), pontuacao:pontos});
+  }
+  render();
+}
+function reiniciarTeste(){ testeState.passo=0; testeState.respostas={}; testeState.finalizado=false; render(); }
+
+/* ---------------------------------------------------------------------- */
+/* TELA: CHATBOT                                                           */
+/* ---------------------------------------------------------------------- */
+function telaChatbot(){
+  return `
+  <div style="display:flex;flex-direction:column;gap:14px;max-width:640px;">
+    <div class="card">
+      <div id="chatScroll" class="chat-scroll">
+        ${state.chat.map(m=>`<div class="bolha ${m.de==='bot'?'bot':'user'}">${m.texto}</div>`).join("")}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <div class="chip" onclick="enviarMsgRapida('Estou com medo')">Estou com medo</div>
+        <div class="chip" onclick="enviarMsgRapida('Como denunciar?')">Como denunciar?</div>
+        <div class="chip" onclick="enviarMsgRapida('Preciso de ajuda urgente')">Ajuda urgente</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <input id="chatInput" class="input-field" placeholder="Escreva algo…" onkeydown="if(event.key==='Enter') enviarMsg();">
+        <button class="btn btn-primario" onclick="enviarMsg()">Enviar</button>
+      </div>
+    </div>
+    <div class="h-legenda">Este chatbot oferece apoio e orientação inicial, mas não substitui atendimento humano especializado.</div>
+  </div>`;
+}
+function enviarMsgRapida(txt){ document.getElementById('chatInput').value = txt; enviarMsg(); }
+function enviarMsg(){
+  const input = document.getElementById('chatInput');
+  const texto = input.value.trim();
+  if(!texto) return;
+  state.chat.push({de:"user", texto});
+  const textoLower = texto.toLowerCase();
+  let resposta = RESPOSTA_PADRAO_BOT;
+  for(const fluxo of FLUXO_CHATBOT){
+    if(fluxo.chaves.some(ch=>textoLower.includes(ch))){ resposta = fluxo.resposta; break; }
+  }
+  render();
+  setTimeout(()=>{
+    state.chat.push({de:"bot", texto:resposta});
+    render();
+  }, 500);
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: CONTATOS DE EMERGÊNCIA                                            */
+/* ---------------------------------------------------------------------- */
+function telaContatos(){
+  return `
+  <div style="display:flex;flex-direction:column;gap:16px;max-width:640px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="h-corpo">Essas pessoas serão avisadas quando você acionar o Alerther.</div>
+      <button class="btn btn-primario btn-sm" onclick="abrirModalContato()">+ Adicionar</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      ${state.contatos.map(c=>`
+        <div class="contato-row">
+          <div class="avatar" style="background:${coresIniciais(c.nome)};">${iniciais(c.nome)}</div>
+          <div style="flex:1;">
+            <div class="h-corpo-forte" style="font-size:14.5px;">${c.nome}</div>
+            <div class="h-legenda">${c.parentesco} · ${c.telefone}</div>
+          </div>
+          <a class="btn btn-outline btn-sm" href="tel:${c.telefone}">📞</a>
+          <a class="btn btn-outline btn-sm" href="${linkWhatsapp(c.telefone,'Oi, tudo bem? Só passando pra avisar que estou usando o SafeHer.')}" target="_blank">💬</a>
+          <button class="btn btn-outline btn-sm" onclick="removerContato('${c.id}')">🗑️</button>
+        </div>
+      `).join("") || '<div class="card h-legenda">Você ainda não tem contatos cadastrados.</div>'}
+    </div>
+  </div>`;
+}
+function abrirModalContato(){
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.id = 'modalContato';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="h-sub" style="margin-bottom:16px;">Novo contato de confiança</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="input-grp"><label>Nome</label><input id="ctNome" class="input-field" placeholder="Nome do contato"></div>
+        <div class="input-grp"><label>Telefone (com DDI+DDD, só números)</label><input id="ctTelefone" class="input-field" placeholder="Ex: 5511999998888"></div>
+        <div class="input-grp"><label>Relação</label>
+          <select id="ctRelacao" class="input-field">
+            <option>Família</option><option>Amizade</option><option>Trabalho</option><option>Vizinhança</option><option>Outro</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button class="btn btn-outline" style="flex:1;" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-primario" style="flex:1;" onclick="salvarContato()">Salvar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+function fecharModal(){ const m=document.getElementById('modalContato'); if(m) m.remove(); }
+function salvarContato(){
+  const nome = document.getElementById('ctNome').value.trim();
+  const telefone = document.getElementById('ctTelefone').value.trim().replace(/\D/g,"");
+  const parentesco = document.getElementById('ctRelacao').value;
+  if(!nome || !telefone){ toast("Preencha nome e telefone."); return; }
+  state.contatos.push({id:uid(), nome, telefone, parentesco});
+  fecharModal(); render();
+  toast("Contato adicionado.");
+}
+function removerContato(id){
+  state.contatos = state.contatos.filter(c=>c.id!==id);
+  render();
+  toast("Contato removido.");
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: ESTATÍSTICAS                                                      */
+/* ---------------------------------------------------------------------- */
+function telaEstatisticas(){
+  const maxPontos = Math.max(1, ...state.testes.map(t=>t.pontuacao));
+  return `
+  <div style="display:flex;flex-direction:column;gap:18px;">
+    <div class="grid grid-3">
+      <div class="card"><div class="h-legenda">Alertas enviados</div><div class="h-titulo">${state.alertas.length}</div></div>
+      <div class="card"><div class="h-legenda">Testes realizados</div><div class="h-titulo">${state.testes.length}</div></div>
+      <div class="card"><div class="h-legenda">Contatos ativos</div><div class="h-titulo">${state.contatos.length}</div></div>
+    </div>
+    <div class="card">
+      <div class="h-corpo-forte" style="margin-bottom:14px;">Evolução do Teste Interativo</div>
+      ${state.testes.length ? `
+      <div class="barra-mini">
+        ${state.testes.map(t=>`<div class="col" style="height:${Math.max(6,(t.pontuacao/PERGUNTAS_TESTE.length)*80)}px;" title="${t.pontuacao} sinais"></div>`).join("")}
+      </div>
+      <div class="h-legenda" style="margin-top:8px;">Cada barra é uma vez que você fez o teste (esquerda → mais antiga).</div>
+      ` : `<div class="h-legenda">Faça o Teste Interativo para começar a acompanhar sua evolução.</div>`}
+    </div>
+    <div class="card">
+      <div class="h-corpo-forte" style="margin-bottom:10px;">Histórico de alertas</div>
+      ${state.alertas.length ? state.alertas.slice().reverse().map(a=>`
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borda);">
+          <span class="h-corpo">${a.dataHora}</span><span class="h-legenda">${a.contatosNotificados.length} contato(s) avisado(s)</span>
+        </div>`).join("") : `<div class="h-legenda">Nenhum alerta enviado ainda — e que bom.</div>`}
+    </div>
+  </div>`;
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: PERFIL                                                            */
+/* ---------------------------------------------------------------------- */
+function telaPerfil(){
+  return `
+  <div style="max-width:480px;display:flex;flex-direction:column;gap:18px;">
+    <div class="card" style="display:flex;align-items:center;gap:16px;">
+      <div class="avatar" style="width:64px;height:64px;font-size:22px;background:${state.usuario.corAvatar};">${iniciais(state.usuario.nome)}</div>
+      <div><div class="h-sub">${state.usuario.nome || "Sem nome"}</div><div class="h-legenda">${state.usuario.email || "-"}</div></div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="input-grp"><label>Nome</label><input id="perfNome" class="input-field" value="${state.usuario.nome}"></div>
+      <div class="input-grp"><label>E-mail</label><input id="perfEmail" class="input-field" value="${state.usuario.email}"></div>
+      <div class="input-grp"><label>Cidade</label><input id="perfCidade" class="input-field" value="${state.usuario.cidade||''}" placeholder="Sua cidade"></div>
+      <button class="btn btn-primario btn-block" onclick="salvarPerfil()">Salvar alterações</button>
+    </div>
+    <button class="btn btn-outline btn-block" onclick="sair()">Sair da conta</button>
+  </div>`;
+}
+function salvarPerfil(){
+  state.usuario.nome = document.getElementById('perfNome').value.trim() || state.usuario.nome;
+  state.usuario.email = document.getElementById('perfEmail').value.trim() || state.usuario.email;
+  state.usuario.cidade = document.getElementById('perfCidade').value.trim();
+  state.usuario.corAvatar = coresIniciais(state.usuario.nome);
+  render();
+  toast("Perfil atualizado.");
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: CONFIGURAÇÕES                                                     */
+/* ---------------------------------------------------------------------- */
+function telaConfig(){
+  return `
+  <div style="max-width:480px;display:flex;flex-direction:column;gap:14px;">
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+      <div><div class="h-corpo-forte">Modo discreto</div><div class="h-legenda">Deixa o app com aparência neutra na tela inicial do celular.</div></div>
+      <div class="switch ${state.config.modoDiscreto?'on':''}" onclick="toggleConfig('modoDiscreto')"><div class="knob"></div></div>
+    </div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+      <div><div class="h-corpo-forte">Notificações</div><div class="h-legenda">Receber avisos e lembretes do SafeHer.</div></div>
+      <div class="switch ${state.config.notificacoes?'on':''}" onclick="toggleConfig('notificacoes')"><div class="knob"></div></div>
+    </div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+      <div><div class="h-corpo-forte">Compartilhar localização em alertas</div><div class="h-legenda">Envia sua localização ao acionar o Alerther.</div></div>
+      <div class="switch ${state.config.compartilharLocalizacao?'on':''}" onclick="toggleConfig('compartilharLocalizacao')"><div class="knob"></div></div>
+    </div>
+    <div class="card">
+      <div class="h-corpo-forte" style="margin-bottom:8px;">Meus dados</div>
+      <div class="h-legenda" style="margin-bottom:12px;">Este protótipo guarda os dados apenas na memória desta aba — eles somem ao atualizar a página.</div>
+      <button class="btn btn-outline btn-block" onclick="limparDados()">Limpar todos os dados</button>
+    </div>
+  </div>`;
+}
+function toggleConfig(chave){ state.config[chave] = !state.config[chave]; render(); }
+function limparDados(){
+  state.alertas = []; state.testes = [];
+  state.contatos = [];
+  state.chat = [{de:"bot", texto:"Oi, eu sou a assistente do SafeHer. Como você está agora?"}];
+  render();
+  toast("Dados locais limpos.");
+}
+
+/* ---------------------------------------------------------------------- */
+/* TELA: SOBRE                                                             */
+/* ---------------------------------------------------------------------- */
+function telaSobre(){
+  return `
+  <div style="max-width:600px;display:flex;flex-direction:column;gap:16px;">
+    <div class="card">
+      <div class="h-sub" style="margin-bottom:8px;">Sobre o SafeHer</div>
+      <div class="h-corpo" style="line-height:1.6;">O SafeHer é um protótipo de aplicativo de apoio para mulheres em situação de risco ou violência, reunindo botão de emergência, mapa de pontos de apoio, teste de autoavaliação, chatbot de orientação e gestão de contatos de confiança em um só lugar.</div>
+    </div>
+    <div class="card">
+      <div class="h-corpo-forte" style="margin-bottom:10px;">Linhas de apoio nacionais (Brasil)</div>
+      ${CONTATOS_UTEIS.map(c=>`<div style="padding:6px 0;"><b>${c.numero}</b> — ${c.nome}: <span class="h-legenda">${c.desc}</span></div>`).join("")}
+    </div>
+    <div class="h-legenda">Versão web de demonstração — dados guardados apenas em memória, sem envio real de mensagens ou ligações automáticas.</div>
+  </div>`;
+}
+
+/* ---------------------------------------------------------------------- */
+/* BOOT                                                                    */
+/* ---------------------------------------------------------------------- */
+state.route = location.hash || "#/splash";
+render();
+</script>
+</body>
+</html>
