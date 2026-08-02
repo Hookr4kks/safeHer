@@ -4,6 +4,16 @@
    ========================================================================== */
 
 /* ---------------------------------------------------------------- ícones */
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { auth, googleProvider } from "./firebase.js";
+
 const ICONE = {
   mao:      `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 13.6c1.4-1.1 3-1.1 4.1-.1l1.7 1.6"/><path d="M9 15.1V8.4a1.05 1.05 0 012.1 0v4.4"/><path d="M11.1 12.8V7.4a1.05 1.05 0 012.1 0v5.2"/><path d="M13.2 12.6V8.2a1.05 1.05 0 012.1 0v5"/><path d="M15.3 13.2V9.6a1 1 0 012 0v5c0 3-2.2 5.4-5.1 5.4h-1.3c-1.4 0-2.7-.5-3.6-1.5l-3.4-3.6"/></svg>`,
   casa:     `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg>`,
@@ -39,15 +49,21 @@ const I18N = {
     loginTitulo: "Bem-vinda de volta", loginSub: "Entre para acessar sua rede de apoio",
     labelEmail: "E-mail", labelSenha: "Senha",
     btnEntrar: "Entrar", btnCriarConta: "Criar conta",
+    btnEntrarGoogle: "Continuar com Google",
     faixaLogin: "Em perigo agora? Ligue {n190} ou {n180} imediatamente.",
     cadTitulo: "Criar sua conta", cadSub: "Leva menos de um minuto",
     labelNome: "Nome", placeholderNome: "Como podemos te chamar?",
     placeholderSenha: "Crie uma senha",
     btnCriarContinuar: "Criar conta e continuar", btnJaTenho: "Já tenho conta",
     toastDigiteEmail: "Digite seu e-mail para entrar.",
+    toastDigiteSenha: "Digite sua senha para entrar.",
+    toastSenhaCurta: "A senha precisa ter pelo menos 6 caracteres.",
     toastLoginOk: "Login realizado. Bem-vinda ao SafeHer!",
-    toastPreencheNomeEmail: "Preencha nome e e-mail.",
+    toastLoginErro: "E-mail ou senha invalidos. Confira os dados e tente novamente.",
+    toastLoginGoogleErro: "Nao foi possivel entrar com Google. Confira se o provedor esta ativado no Firebase.",
+    toastPreencheNomeEmail: "Preencha nome, e-mail e senha.",
     toastContaCriada: "Conta criada com sucesso!",
+    toastCadastroErro: "Nao foi possivel criar a conta. Confira os dados ou tente outro e-mail.",
 
     navInicio:"Início", navEmergencia:"Emergência", navMapa:"Mapa de Apoio", navTeste:"Teste Interativo",
     navChat:"Chatbot", navContatos:"Contatos", navPerfil:"Perfil", navConfig:"Configurações",
@@ -162,15 +178,21 @@ const I18N = {
     loginTitulo: "Welcome back", loginSub: "Sign in to access your support network",
     labelEmail: "Email", labelSenha: "Password",
     btnEntrar: "Sign in", btnCriarConta: "Create account",
+    btnEntrarGoogle: "Continue with Google",
     faixaLogin: "In danger right now? Call {n190} or {n180} immediately.",
     cadTitulo: "Create your account", cadSub: "Takes less than a minute",
     labelNome: "Name", placeholderNome: "What should we call you?",
     placeholderSenha: "Create a password",
     btnCriarContinuar: "Create account and continue", btnJaTenho: "I already have an account",
     toastDigiteEmail: "Enter your email to sign in.",
+    toastDigiteSenha: "Enter your password to sign in.",
+    toastSenhaCurta: "Password must be at least 6 characters.",
     toastLoginOk: "Signed in. Welcome to SafeHer!",
-    toastPreencheNomeEmail: "Fill in your name and email.",
+    toastLoginErro: "Invalid email or password. Check your details and try again.",
+    toastLoginGoogleErro: "Could not sign in with Google. Check if the provider is enabled in Firebase.",
+    toastPreencheNomeEmail: "Fill in your name, email and password.",
     toastContaCriada: "Account created successfully!",
+    toastCadastroErro: "Could not create the account. Check your details or try another email.",
 
     navInicio:"Home", navEmergencia:"Emergency", navMapa:"Support Map", navTeste:"Interactive Test",
     navChat:"Chatbot", navContatos:"Contacts", navPerfil:"Profile", navConfig:"Settings",
@@ -285,15 +307,21 @@ const I18N = {
     loginTitulo: "Bienvenida de nuevo", loginSub: "Inicia sesión para acceder a tu red de apoyo",
     labelEmail: "Correo electrónico", labelSenha: "Contraseña",
     btnEntrar: "Iniciar sesión", btnCriarConta: "Crear cuenta",
+    btnEntrarGoogle: "Continuar con Google",
     faixaLogin: "¿Estás en peligro ahora? Llama al {n190} o al {n180} de inmediato.",
     cadTitulo: "Crea tu cuenta", cadSub: "Toma menos de un minuto",
     labelNome: "Nombre", placeholderNome: "¿Cómo te llamamos?",
     placeholderSenha: "Crea una contraseña",
     btnCriarContinuar: "Crear cuenta y continuar", btnJaTenho: "Ya tengo una cuenta",
     toastDigiteEmail: "Escribe tu correo para iniciar sesión.",
+    toastDigiteSenha: "Escribe tu contraseña para iniciar sesión.",
+    toastSenhaCurta: "La contraseña debe tener al menos 6 caracteres.",
     toastLoginOk: "Sesión iniciada. ¡Bienvenida a SafeHer!",
-    toastPreencheNomeEmail: "Completa tu nombre y correo.",
+    toastLoginErro: "Correo o contraseña invalidos. Revisa los datos e intentalo otra vez.",
+    toastLoginGoogleErro: "No fue posible entrar con Google. Revisa si el proveedor esta activado en Firebase.",
+    toastPreencheNomeEmail: "Completa tu nombre, correo y contraseña.",
     toastContaCriada: "¡Cuenta creada con éxito!",
+    toastCadastroErro: "No fue posible crear la cuenta. Revisa los datos o prueba otro correo.",
 
     navInicio:"Inicio", navEmergencia:"Emergencia", navMapa:"Mapa de Apoyo", navTeste:"Test Interactivo",
     navChat:"Chatbot", navContatos:"Contactos", navPerfil:"Perfil", navConfig:"Configuración",
@@ -732,6 +760,14 @@ function posRender(){
   if(chatEl) chatEl.scrollTop = chatEl.scrollHeight;
 }
 
+function aplicarUsuarioAuth(user){
+  const nome = user.displayName || (user.email ? user.email.split("@")[0] : t("boasVindasPadrao"));
+  state.usuario.nome = nome;
+  state.usuario.email = user.email || "";
+  state.usuario.corAvatar = coresIniciais(nome);
+  state.logado = true;
+}
+
 /* ---------------------------------------------------------------------- */
 /* TELA: SPLASH                                                            */
 /* ---------------------------------------------------------------------- */
@@ -758,6 +794,7 @@ function telaLogin(){
       <div style="display:flex;flex-direction:column;gap:14px;">
         <div class="input-grp"><label>${t("labelEmail")}</label><input id="loginEmail" class="input-field" placeholder="voce@email.com" type="email"></div>
         <div class="input-grp"><label>${t("labelSenha")}</label><input id="loginSenha" class="input-field" placeholder="••••••••" type="password"></div>
+        <button class="btn btn-google btn-block" onclick="entrarComGoogle()"><span class="google-mark">G</span>${t("btnEntrarGoogle")}</button>
         <button class="btn btn-primario btn-block" onclick="fazerLogin()">${t("btnEntrar")}</button>
         <button class="btn btn-outline btn-block" onclick="ir('#/cadastro')">${t("btnCriarConta")}</button>
       </div>
@@ -782,27 +819,61 @@ function telaCadastro(){
     </div>
   </div>`;
 }
-function fazerLogin(){
+async function fazerLogin(){
   const email = document.getElementById('loginEmail').value.trim();
+  const senha = document.getElementById('loginSenha').value;
   if(!email){ toast(t("toastDigiteEmail")); return; }
-  state.usuario.email = email;
-  if(!state.usuario.nome) state.usuario.nome = email.split("@")[0];
-  state.usuario.corAvatar = coresIniciais(state.usuario.nome);
-  state.logado = true;
-  toast(t("toastLoginOk"));
-  ir("#/inicio");
+  if(!senha){ toast(t("toastDigiteSenha")); return; }
+
+  try{
+    const credencial = await signInWithEmailAndPassword(auth, email, senha);
+    aplicarUsuarioAuth(credencial.user);
+    toast(t("toastLoginOk"));
+    ir("#/inicio");
+  }catch(erro){
+    console.error("Erro no login com e-mail e senha:", erro);
+    toast(t("toastLoginErro"));
+  }
 }
-function fazerCadastro(){
+async function entrarComGoogle(){
+  try{
+    const credencial = await signInWithPopup(auth, googleProvider);
+    aplicarUsuarioAuth(credencial.user);
+    toast(t("toastLoginOk"));
+    ir("#/inicio");
+  }catch(erro){
+    console.error("Erro no login com Google:", erro);
+    toast(t("toastLoginGoogleErro"));
+  }
+}
+async function fazerCadastro(){
   const nome = document.getElementById('cadNome').value.trim();
   const email = document.getElementById('cadEmail').value.trim();
-  if(!nome || !email){ toast(t("toastPreencheNomeEmail")); return; }
-  state.usuario.nome = nome; state.usuario.email = email;
-  state.usuario.corAvatar = coresIniciais(nome);
-  state.logado = true;
-  toast(t("toastContaCriada"));
-  ir("#/inicio");
+  const senha = document.getElementById('cadSenha').value;
+  if(!nome || !email || !senha){ toast(t("toastPreencheNomeEmail")); return; }
+  if(senha.length < 6){ toast(t("toastSenhaCurta")); return; }
+
+  try{
+    const credencial = await createUserWithEmailAndPassword(auth, email, senha);
+    await updateProfile(credencial.user, { displayName: nome });
+    aplicarUsuarioAuth({ ...credencial.user, displayName: nome });
+    toast(t("toastContaCriada"));
+    ir("#/inicio");
+  }catch(erro){
+    console.error("Erro no cadastro com e-mail e senha:", erro);
+    toast(t("toastCadastroErro"));
+  }
 }
-function sair(){ state.logado = false; ir("#/login"); }
+async function sair(){
+  try{
+    if(auth.currentUser) await signOut(auth);
+  }catch(erro){
+    console.error("Erro ao sair do Firebase:", erro);
+  }
+  state.logado = false;
+  state.usuario = {nome:"", email:"", cidade:"", corAvatar: coresIniciais("U")};
+  ir("#/login");
+}
 
 /* ---------------------------------------------------------------------- */
 /* TELA: INÍCIO                                                            */
@@ -1279,6 +1350,41 @@ function telaSobre(){
 /* ---------------------------------------------------------------------- */
 /* BOOT                                                                    */
 /* ---------------------------------------------------------------------- */
+Object.assign(window, {
+  abrirMapa,
+  abrirModalContato,
+  alternarTema,
+  cancelarAlerta,
+  definirIdioma,
+  dispararAlerta,
+  entrarComGoogle,
+  enviarMsg,
+  enviarMsgRapida,
+  fazerCadastro,
+  fazerLogin,
+  fecharModal,
+  ir,
+  limparDados,
+  obterLocalizacaoMapa,
+  reiniciarTeste,
+  removerContato,
+  responderTeste,
+  sair,
+  salvarContato,
+  salvarPerfil,
+  toggleConfig,
+});
+
+onAuthStateChanged(auth, (user)=>{
+  if(!user) return;
+  aplicarUsuarioAuth(user);
+  if(["#/splash","#/login","#/cadastro"].includes(state.route)){
+    ir("#/inicio");
+  }else{
+    render();
+  }
+});
+
 aplicarTema();
 state.route = location.hash || "#/splash";
 render();

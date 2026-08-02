@@ -183,6 +183,14 @@ input,textarea,select{ font-family:inherit; }
 .btn-secundario:hover{ background:#EAC9DA; }
 .btn-outline{ background:transparent; border:1px solid var(--borda-forte); color:var(--tinta-suave); }
 .btn-outline:hover{ border-color:var(--rosa); color:var(--rosa-forte); }
+.btn-google{ background:var(--papel); color:var(--tinta); border:1px solid var(--borda-forte); }
+.btn-google:hover{ border-color:var(--tinta-fraca); background:var(--creme); }
+.google-mark{
+  width:18px; height:18px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:#fff; color:#4285F4; border:1px solid #DADCE0;
+  font-family:Arial,sans-serif; font-size:13px; font-weight:700;
+}
 .btn-emergencia{ background:var(--vinho); color:#fff; }
 .btn-emergencia:hover{ background:#733232; }
 .btn-block{ width:100%; }
