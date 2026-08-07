@@ -1,0 +1,29 @@
+/* Estilos exclusivos da página Início — grade de módulos. */
+.modulo-card{
+  border-radius:var(--raio-lg); padding:20px; position:relative; overflow:hidden;
+  border:1px solid var(--borda); background:var(--papel);
+  transition:border-color var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.modulo-card:hover{ border-color:var(--rosa); transform:translateY(-2px); box-shadow:0 8px 20px rgba(43,30,38,.06); }
+.modulo-card .ic{
+  width:34px; height:34px; border-radius:9px; background:var(--rosa-fraco);
+  display:flex; align-items:center; justify-content:center; margin-bottom:14px;
+}
+.modulo-card .ic svg{ width:17px; height:17px; stroke:var(--rosa-forte); }
+.modulo-card .titulo{ font-size:15.5px; font-weight:700; margin-bottom:5px; color:var(--tinta); }
+.modulo-card .desc{ font-size:13px; color:var(--tinta-suave); line-height:1.45; }
+
+.modulo-emergencia{ border-color:var(--vinho); background:var(--vinho-fraco); }
+.modulo-emergencia:hover{ border-color:var(--vinho); box-shadow:0 8px 20px rgba(140,62,62,.15); }
+.modulo-emergencia .ic{ background:#fff; }
+.modulo-emergencia .ic svg{ stroke:var(--vinho); }
+.modulo-emergencia .titulo{ color:var(--vinho); }
+.pontinho-emergencia{
+  position:absolute; top:14px; right:14px; width:9px; height:9px; border-radius:50%;
+  background:var(--vinho); animation:pulso-ponto 1.8s infinite;
+}
+@keyframes pulso-ponto{
+  0%{ box-shadow:0 0 0 0 rgba(140,62,62,.45); }
+  70%{ box-shadow:0 0 0 9px rgba(140,62,62,0); }
+  100%{ box-shadow:0 0 0 0 rgba(140,62,62,0); }
+}

@@ -1,0 +1,10 @@
+/* Estilos exclusivos da página de Emergência (botão de pânico). */
+.alerther-anel-externo{
+  width:150px; height:150px; border-radius:50%; background:var(--vinho-fraco);
+  display:flex; align-items:center; justify-content:center;
+}
+.alerther-anel-interno{
+  width:100px; height:100px; border-radius:50%; background:var(--vinho);
+  display:flex; align-items:center; justify-content:center;
+}
+.alerther-anel-interno svg{ width:34px; height:34px; stroke:#fff; }

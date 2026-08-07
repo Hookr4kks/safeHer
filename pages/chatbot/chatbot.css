@@ -1,0 +1,13 @@
+/* Estilos exclusivos da página Chatbot. */
+.chat-scroll{ display:flex; flex-direction:column; gap:10px; max-height:52vh; overflow-y:auto; padding:6px 2px; }
+.bolha{ max-width:78%; padding:11px 14px; border-radius:var(--raio-md); font-size:14.5px; line-height:1.5; }
+.bolha.bot{ background:var(--creme-forte); color:var(--tinta); align-self:flex-start; border-bottom-left-radius:4px; }
+.bolha.user{ background:var(--rosa); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+.bolha{ animation:bolhain .18s var(--ease); }
+@keyframes bolhain{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:translateY(0); } }
+.chip{
+  background:var(--papel); border:1px solid var(--borda-forte); border-radius:var(--raio-full);
+  padding:7px 13px; font-size:13px; color:var(--tinta-suave); cursor:pointer;
+  transition:border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.chip:hover{ border-color:var(--rosa); color:var(--rosa-forte); }
