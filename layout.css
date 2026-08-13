@@ -89,6 +89,22 @@ body{
   font-family:'Karla',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   min-height:100vh;
 }
+
+/* Camada de imagem de fundo — fica entre a cor base (body) e o conteúdo
+   (sidebar/main/cards). Para ativar: defina --bg-imagem no :root, ex.:
+   :root{ --bg-imagem: url('assets/img/fundo.png'); }
+   A pasta assets/img/ ainda não existe no projeto — criar quando a imagem
+   estiver definida. Enquanto --bg-imagem for "none", a camada fica invisível
+   e não afeta nada. */
+:root{ --bg-imagem: none; }
+.bg-camada{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:var(--bg-imagem);
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+  opacity:.5;
+  transition:opacity var(--dur) var(--ease);
+}
+html[data-tema="escuro"] .bg-camada{ opacity:.16; }
 h1,h2,h3,h4,p{ margin:0; }
 button{ font-family:inherit; cursor:pointer; }
 a{ color:inherit; text-decoration:none; }
