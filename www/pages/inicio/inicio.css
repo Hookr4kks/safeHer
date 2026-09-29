@@ -1,0 +1,93 @@
+/* Estilos exclusivos da página Início — grade de módulos + fundo decorativo
+   de pétalas de lírio (bem sutil, atrás do conteúdo). */
+
+.inicio-pagina{ position:relative; }
+.inicio-conteudo{ position:relative; z-index:1; display:flex; flex-direction:column; gap:42px; }
+
+/* ---------------------------------------------------------------- pétalas de fundo */
+.petalas-fundo{ position:absolute; inset:0; overflow:hidden; z-index:0; pointer-events:none; }
+.petala{
+  position:absolute;
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 2C74 18 87 55 50 98C13 55 26 18 50 2Z'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 2C74 18 87 55 50 98C13 55 26 18 50 2Z'/%3E%3C/svg%3E");
+  -webkit-mask-size:contain; mask-size:contain;
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  -webkit-mask-position:center; mask-position:center;
+}
+
+/* ---------------------------------------------------------------- saudação */
+.inicio-saudacao{ display:flex; align-items:center; gap:14px; }
+.inicio-saudacao .ic-lirio{
+  width:44px; height:44px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(150deg, var(--rosa-fraco), var(--papel));
+  border:1px solid var(--borda); display:flex; align-items:center; justify-content:center;
+}
+.inicio-saudacao .ic-lirio svg{ width:20px; height:20px; stroke:var(--rosa-forte); }
+
+/* ---------------------------------------------------------------- cards de módulo ("balões") */
+.grid-3{ gap:22px; }
+.modulo-card{
+  border-radius:var(--raio-lg); padding:22px; position:relative; overflow:hidden;
+  border:1px solid var(--borda); background:var(--papel); box-shadow:var(--sombra-card);
+  transition:border-color var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.modulo-card:hover{ border-color:var(--borda-forte); transform:translateY(-3px); box-shadow:0 12px 26px rgba(43,30,38,.09); }
+
+/* textura granulada bem sutil na superfície do cartão — tira o efeito "liso
+   demais", dá uma sensação de papel/tecido sem chamar atenção. */
+.modulo-card::before{
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none; border-radius:inherit;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.05; mix-blend-mode:multiply;
+}
+html[data-tema="escuro"] .modulo-card::before{ opacity:.14; mix-blend-mode:overlay; }
+
+/* pétala-marca d'água discreta em cada cartão, no canto — reforça a estética
+   sem poluir; some por trás do conteúdo (z-index abaixo). */
+.modulo-card::after{
+  content:""; position:absolute; right:-22px; bottom:-24px; width:88px; height:88px;
+  background:var(--rosa-fraco); opacity:.55; z-index:0; transform:rotate(-14deg);
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 2C74 18 87 55 50 98C13 55 26 18 50 2Z'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 2C74 18 87 55 50 98C13 55 26 18 50 2Z'/%3E%3C/svg%3E");
+  -webkit-mask-size:contain; mask-size:contain;
+  -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+  transition:transform var(--dur) var(--ease);
+}
+.modulo-card:hover::after{ transform:rotate(-6deg) scale(1.06); }
+
+.modulo-card .ic{
+  width:42px; height:42px; border-radius:50%; position:relative; z-index:1;
+  background:linear-gradient(150deg, var(--rosa-fraco), var(--papel));
+  border:1px solid var(--borda);
+  display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+  transition:transform var(--dur) var(--ease);
+}
+.modulo-card:hover .ic{ transform:scale(1.06); }
+.modulo-card .ic svg{ width:19px; height:19px; stroke:var(--rosa-forte); }
+.modulo-card .titulo{ position:relative; z-index:1; font-size:15.5px; font-weight:700; margin-bottom:5px; color:var(--tinta); }
+.modulo-card .desc{ position:relative; z-index:1; font-size:13px; color:var(--tinta-suave); line-height:1.5; }
+
+.modulo-emergencia{ border-color:var(--vinho); background:var(--vinho-fraco); }
+.modulo-emergencia:hover{ border-color:var(--vinho); box-shadow:0 12px 26px rgba(140,62,62,.16); }
+.modulo-emergencia::after{ background:#fff; opacity:.35; }
+.modulo-emergencia .ic{ background:linear-gradient(150deg, #fff, var(--vinho-fraco)); border-color:#E0BEBE; }
+.modulo-emergencia .ic svg{ stroke:var(--vinho); }
+.modulo-emergencia .titulo{ color:var(--vinho); }
+.pontinho-emergencia{
+  position:absolute; top:16px; right:16px; z-index:1; width:9px; height:9px; border-radius:50%;
+  background:var(--vinho); animation:pulso-ponto 1.8s infinite;
+}
+@keyframes pulso-ponto{
+  0%{ box-shadow:0 0 0 0 rgba(140,62,62,.45); }
+  70%{ box-shadow:0 0 0 9px rgba(140,62,62,0); }
+  100%{ box-shadow:0 0 0 0 rgba(140,62,62,0); }
+}
+
+/* ---------------------------------------------------------------- card de dica */
+.card-dica{ display:flex; align-items:flex-start; gap:14px; }
+.card-dica .ic{
+  width:36px; height:36px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(150deg, var(--rosa-fraco), var(--papel)); border:1px solid var(--borda);
+  display:flex; align-items:center; justify-content:center;
+}
+.card-dica .ic svg{ width:17px; height:17px; stroke:var(--rosa-forte); }

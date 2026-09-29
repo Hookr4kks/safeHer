@@ -1,0 +1,12 @@
+/* Estilos exclusivos da página Teste Interativo. */
+.progress-bar{ height:5px; border-radius:var(--raio-full); background:var(--creme-forte); overflow:hidden; }
+.progress-bar > div{ height:100%; background:var(--rosa); transition:width .3s var(--ease); }
+
+.opcao-sn{
+  display:flex; align-items:center; justify-content:center; gap:8px; flex:1;
+  padding:13px; border-radius:var(--raio-sm); border:1.5px solid var(--borda-forte);
+  background:var(--papel); color:var(--tinta); font-weight:600; font-size:14.5px;
+  transition:border-color var(--dur) var(--ease), background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.opcao-sn:hover{ border-color:var(--rosa); }
+.opcao-sn.selecionada{ background:var(--rosa-fraco); border-color:var(--rosa); color:var(--rosa-forte); }

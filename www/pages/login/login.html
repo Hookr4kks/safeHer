@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>SafeHer — Entrar</title>
+<link rel="stylesheet" href="../../layout.css">
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+<div id="toastWrap" class="toast-wrap"></div>
+<div id="app"></div>
+<!-- Runtime do Capacitor + plugin nativo de login Google (so tem efeito
+     dentro do app instalado; no navegador normal ficam inofensivos, o app
+     usa signInWithPopup do Firebase mesmo). Ver layout.js -> loginComGoogle. -->
+<script src="https://cdn.jsdelivr.net/npm/@capacitor/core@8.5.0/dist/capacitor.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@capgo/capacitor-social-login@8.4.2/dist/plugin.js"></script>
+<script type="module" src="login.js"></script>
+</body>
+</html>

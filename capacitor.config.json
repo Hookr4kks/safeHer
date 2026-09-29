@@ -1,0 +1,12 @@
+{
+  "appId": "com.teste.safeher",
+  "appName": "SafeHer",
+  "webDir": "www",
+  "plugins": {
+    "SocialLogin": {
+      "google": {
+        "webClientId": "1065994317910-uaal613dqrfm7hrr485d5nc6nrc4u85h.apps.googleusercontent.com"
+      }
+    }
+  }
+}

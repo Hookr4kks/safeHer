@@ -1,0 +1,2 @@
+/* Estilos exclusivos da página Contatos de Emergência. */
+.contato-row{ display:flex; align-items:center; gap:12px; padding:13px; border-radius:var(--raio-md); background:var(--papel); border:1px solid var(--borda); }

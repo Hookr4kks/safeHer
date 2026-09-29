@@ -1,0 +1,7 @@
+/* Estilos exclusivos da página de login. */
+.tela-login{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+.tela-login .card{ max-width:380px; width:100%; }
+.tela-login .cabecalho{ text-align:center; margin-bottom:22px; }
+.tela-login .marca{ width:52px; height:52px; border-radius:14px; margin:0 auto 14px; background:var(--rosa); display:flex; align-items:center; justify-content:center; }
+.tela-login .marca svg{ width:26px; height:26px; stroke:#fff; }
+.tela-login .campos{ display:flex; flex-direction:column; gap:14px; }
